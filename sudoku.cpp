@@ -107,14 +107,14 @@ bool sudoku::verifierCE(int Val, int X, int Y)
 {
     int a;
     a=sqrt(_n);
-    auto sqL= X-X%a+1;
-    auto sqC= Y-Y%a+1;
+    auto X0= (X/a)*a;
+    auto Y0= (Y/a)*a;
     bool ok= true;
-    for (int i= sqL; i<= sqL+a-1 ; i++ )
+    for (int i=0; i<3 ; i++ )
     {
-        for (int j=sqC; j<=sqC+a-1;j++)
+        for (int j=0; j<3;j++)
         {
-            if (_grid[i][j]==Val)
+            if (_grid[X0+i][Y0+j]==Val)
                 ok=false;
         }
     }
@@ -132,50 +132,79 @@ bool sudoku::positionner(int entier,int X,int Y)
         return false;
     }
 }
-bool sudoku::solve(int ligne, int col){
-    if(col == 9)
+bool sudoku::impasse(int x, int y)
+{
+  bool bl=true;
+  for (int k=1;k<10;k++)
+  {
+    if (positionner(k,x,y))
     {
-      return true;
+      bl=false;
     }
-    if(_grid[ligne][col] != 0)
+  }
+  return bl;
+}
+bool sudoku::solve(int ligne,int col)
+{
+  if (col==9)
+  {
+    return true;
+  }
+  if (impasse(ligne,col))
+  {
+    return false;
+  }
+  for (int k=1;k<10;k++)
+  {
+    if (positionner(k,col,ligne))
     {
-        if(ligne== 8)
-        {
-            return solve(0,col+1);
-        }
-        else
-        {
-            return solve(ligne+1,col);
-        }
-    }
-    for(int i=1; i<=9; i++)
-    {
-      _grid[ligne][col] = i;
-      if(positionner(i,ligne,col))
+      _grid[ligne][col]=k;
+      if (ligne==8)
       {
-        if(ligne == 8)
-        {
-          if(solve(0,col+1))
-            return true;
-        }
-        else
-        {
-          if(solve(ligne+1,col))
-            return true;
-        }
+        if (solve(0,col+1))
+          return true;
+      }
+      else
+      {
+        if (solve(ligne+1,col))
+          return true;
       }
     }
-    _grid[ligne][col] = 0;
-    return false;
+  }
+  _grid[col][ligne]=0;
+  return false;
 }
+
 sudoku::~sudoku()
 {
 
 }
-int main()
+std::ostream& operator<<(std::ostream& flux, const sudoku game)
 {
-    sudoku su(5,9);
-    su.solve(0,0);
-    cout << su;
-    return 0;
+    int c;
+    c=sqrt(game._n);
+    for (int a=0; a<=(game._n)-1; a++)
+    {
+        int d(a);
+        if (d%c==0)
+        {
+            flux << " --------------------------" << std::endl;
+        }
+        for (int b=0; b<=game._n-1 ; b++)
+        {
+            int e(b);
+            if (e%c==0 and e!=0)
+            {
+                flux <<"|";
+            }
+
+            flux << " " << game._grid[a][b] << " ";
+
+            if (e==game._n-1)
+            {
+                flux<< "|" << std::endl;
+            }
+        }
+    }
+  return flux;
 }
