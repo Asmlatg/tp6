@@ -107,8 +107,8 @@ bool sudoku::verifierCE(int Val, int X, int Y)
 {
     int a;
     a=sqrt(_n);
-    auto X0= (X/a)*a;
-    auto Y0= (Y/a)*a;
+    auto X0= X-X%a;
+    auto Y0=Y-Y%a;
     bool ok= true;
     for (int i=0; i<3 ; i++ )
     {
@@ -132,24 +132,13 @@ bool sudoku::positionner(int entier,int X,int Y)
         return false;
     }
 }
-bool sudoku::impasse(int x, int y)
-{
-  bool bl=true;
-  for (int k=1;k<10;k++)
-  {
-    if (positionner(k,x,y))
-    {
-      bl=false;
-    }
-  }
-  return bl;
-}
+
 bool sudoku::solve()
 {
     int i,j;
     if (filled())
     {
-        return true;
+        return true; //return true si on a completé la grille
     }
     for (int k=1;k<=9;k++)
     {
@@ -158,10 +147,10 @@ bool sudoku::solve()
             _grid[i][j]=k;
             if (solve())
                 return true;
-            _grid[i][j]=0;
+            _grid[i][j]=0; //la valeur ne permet pas de résoudre le jeu
         }
     }
-    return false;
+    return false; //backtracking
 }
 
 sudoku::~sudoku()
