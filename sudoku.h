@@ -13,7 +13,6 @@ class sudoku
         bool verifierCE(int Val, int X, int Y);
         bool positionner(int entier,int X,int Y);
         bool solve();
-  		  bool impasse(int x, int y);
         virtual ~sudoku();
     protected:
 
