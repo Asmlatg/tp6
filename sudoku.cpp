@@ -144,35 +144,24 @@ bool sudoku::impasse(int x, int y)
   }
   return bl;
 }
-bool sudoku::solve(int ligne,int col)
+bool sudoku::solve()
 {
-  if (col==9)
-  {
-    return true;
-  }
-  if (impasse(ligne,col))
-  {
-    return false;
-  }
-  for (int k=1;k<10;k++)
-  {
-    if (positionner(k,col,ligne))
+    int i,j;
+    if (filled())
     {
-      _grid[ligne][col]=k;
-      if (ligne==8)
-      {
-        if (solve(0,col+1))
-          return true;
-      }
-      else
-      {
-        if (solve(ligne+1,col))
-          return true;
-      }
+        return true;
     }
-  }
-  _grid[col][ligne]=0;
-  return false;
+    for (int k=1;k<=9;k++)
+    {
+        if (positionner(k,i,j))
+        {
+            _grid[i][j]=k;
+            if (solve())
+                return true;
+            _grid[i][j]=0;
+        }
+    }
+    return false;
 }
 
 sudoku::~sudoku()
